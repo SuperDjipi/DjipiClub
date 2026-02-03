@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SSL - DjipiClub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .test-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #ccc;
+        }
+        
+        .test-item h3 {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 18px;
+        }
+        
+        .status {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .log {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .log div {
+            margin-bottom: 4px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .info {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test SSL/WSS - DjipiClub</h1>
+        
+        <div class="info">
+            <strong>ℹ️ Informations :</strong><br>
+            Backend: <code>djipi.club:8080</code><br>
+            Protocole: HTTPS + WSS (WebSocket Secure)
+        </div>
+        
+        <button id="testBtn">▶️ Lancer les tests</button>
+        
+        <div class="test-item">
+            <h3>🔐 Test HTTPS (fetch)</h3>
+            <div id="httpsStatus" class="status pending">En attente...</div>
+            <div id="httpsLog" class="log"></div>
+        </div>
+        
+        <div class="test-item">
+            <h3>🔌 Test WebSocket Secure (WSS)</h3>
+            <div id="wssStatus" class="status pending">En attente...</div>
+            <div id="wssLog" class="log"></div>
+        </div>
+        
+        <div class="test-item">
+            <h3>📱 User Agent</h3>
+            <div class="log" id="uaLog"></div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://djipi.club:8080';
+        const WSS_URL = 'wss://djipi.club:8080/ws';
+        
+        const httpsLog = document.getElementById('httpsLog');
+        const wssLog = document.getElementById('wssLog');
+        const httpsStatus = document.getElementById('httpsStatus');
+        const wssStatus = document.getElementById('wssStatus');
+        const testBtn = document.getElementById('testBtn');
+        const uaLog = document.getElementById('uaLog');
+        
+        // Afficher le User Agent
+        uaLog.textContent = navigator.userAgent;
+        
+        function logHttps(message, type = 'info') {
+            const line = document.createElement('div');
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            line.style.color = type === 'error' ? '#ff5555' : type === 'success' ? '#50fa7b' : '#f8f8f2';
+            httpsLog.appendChild(line);
+            httpsLog.scrollTop = httpsLog.scrollHeight;
+        }
+        
+        function logWss(message, type = 'info') {
+            const line = document.createElement('div');
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            line.style.color = type === 'error' ? '#ff5555' : type === 'success' ? '#50fa7b' : '#8be9fd';
+            wssLog.appendChild(line);
+            wssLog.scrollTop = wssLog.scrollHeight;
+        }
+        
+        async function testHTTPS() {
+            httpsStatus.textContent = 'Testing...';
+            httpsStatus.className = 'status pending';
+            logHttps('Début du test HTTPS');
+            
+            try {
+                logHttps(`Requête vers: ${BACKEND_URL}/health`);
+                
+                const response = await fetch(`${BACKEND_URL}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                logHttps(`Status: ${response.status} ${response.statusText}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                logHttps(`Réponse: ${JSON.stringify(data, null, 2)}`, 'success');
+                
+                httpsStatus.textContent = '✅ HTTPS OK';
+                httpsStatus.className = 'status success';
+                
+                return true;
+                
+            } catch (error) {
+                logHttps(`Erreur: ${error.message}`, 'error');
+                httpsStatus.textContent = `❌ Échec: ${error.message}`;
+                httpsStatus.className = 'status error';
+                return false;
+            }
+        }
+        
+        function testWSS() {
+            return new Promise((resolve) => {
+                wssStatus.textContent = 'Connecting...';
+                wssStatus.className = 'status pending';
+                logWss('Début du test WebSocket Secure');
+                logWss(`Connexion à: ${WSS_URL}`);
+                
+                let ws;
+                const timeout = setTimeout(() => {
+                    if (ws && ws.readyState === WebSocket.CONNECTING) {
+                        logWss('Timeout après 5s', 'error');
+                        ws.close();
+                        wssStatus.textContent = '❌ Timeout';
+                        wssStatus.className = 'status error';
+                        resolve(false);
+                    }
+                }, 5000);
+                
+                try {
+                    ws = new WebSocket(WSS_URL);
+                    
+                    ws.onopen = () => {
+                        clearTimeout(timeout);
+                        logWss('✅ Connexion établie', 'success');
+                        logWss(`ReadyState: ${ws.readyState}`);
+                        
+                        // Envoyer un ping de test
+                        const testMessage = {
+                            type: 'ping',
+                            timestamp: Date.now()
+                        };
+                        logWss(`📤 Envoi: ${JSON.stringify(testMessage)}`);
+                        ws.send(JSON.stringify(testMessage));
+                    };
+                    
+                    ws.onmessage = (event) => {
+                        logWss(`📥 Reçu: ${event.data}`);
+                    };
+                    
+                    ws.onerror = (error) => {
+                        clearTimeout(timeout);
+                        logWss(`❌ Erreur: ${error.message}`, 'error');
+                        wssStatus.textContent = '❌ Erreur WebSocket';
+                        wssStatus.className = 'status error';
+                        resolve(false);
+                    };
+                    
+                    ws.onclose = (event) => {
+                        clearTimeout(timeout);
+                        const reason = event.code === 1000 ? 'Connexion fermée normalement' : `Code ${event.code}`;
+                        logWss(`🔌 Fermé: ${reason}`);
+                        
+                        if (wssStatus.className.includes('pending')) {
+                            wssStatus.textContent = '✅ WSS OK';
+                            wssStatus.className = 'status success';
+                            resolve(true);
+                        } else {
+                            resolve(false);
+                        }
+                    };
+                    
+                } catch (error) {
+                    clearTimeout(timeout);
+                    logWss(`❌ Exception: ${error.message}`, 'error');
+                    wssStatus.textContent = `❌ ${error.message}`;
+                    wssStatus.className = 'status error';
+                    resolve(false);
+                }
+            });
+        }
+        
+        async function runTests() {
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Tests en cours...';
+            
+            // Réinitialiser les logs
+            httpsLog.innerHTML = '';
+            wssLog.innerHTML = '';
+            
+            // Lancer les tests
+            const httpsOk = await testHTTPS();
+            const wssOk = await testWSS();
+            
+            // Résultat final
+            setTimeout(() => {
+                testBtn.disabled = false;
+                testBtn.textContent = '▶️ Relancer les tests';
+                
+                if (httpsOk && wssOk) {
+                    alert('✅ Tous les tests sont OK !\n\nLe certificat SSL fonctionne correctement.');
+                } else {
+                    alert('⚠️ Certains tests ont échoué.\n\nVérifiez la console pour plus de détails.');
+                }
+            }, 1000);
+        }
+        
+        testBtn.addEventListener('click', runTests);
+    </script>
+</body>
+</html>

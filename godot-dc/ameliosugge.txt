@@ -1,0 +1,5 @@
+Lobby Godot :
+- le bouton défier génère une nouvelle partie de Scrabble
+- toutes les phrases à reprendre (accents et libellés)
+- nombre de tuiles avec décimales
+

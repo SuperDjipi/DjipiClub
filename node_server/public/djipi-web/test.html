@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test Threads</title></head>
+<body>
+	<h1>Test Support Threads</h1>
+	<div id="result"></div>
+	<script>
+		const resultDiv = document.getElementById('result');
+		
+		// Test 1 : Secure Context
+		if (window.isSecureContext) {
+			resultDiv.innerHTML += '✅ Secure Context OK<br>';
+		} else {
+			resultDiv.innerHTML += '❌ Secure Context MANQUANT<br>';
+		}
+		
+		// Test 2 : SharedArrayBuffer
+		if (typeof SharedArrayBuffer !== 'undefined') {
+			resultDiv.innerHTML += '✅ SharedArrayBuffer disponible<br>';
+		} else {
+			resultDiv.innerHTML += '❌ SharedArrayBuffer bloqué<br>';
+		}
+		
+		// Test 3 : Headers CORS
+		fetch('/play/index.html').then(r => {
+			resultDiv.innerHTML += 'COEP: ' + r.headers.get('cross-origin-embedder-policy') + '<br>';
+			resultDiv.innerHTML += 'COOP: ' + r.headers.get('cross-origin-opener-policy') + '<br>';
+		});
+	</script>
+</body>
+</html>

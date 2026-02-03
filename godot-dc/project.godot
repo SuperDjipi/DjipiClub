@@ -1,0 +1,37 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="DjipiClub"
+run/main_scene="res://scenes/hub/login.tscn"
+config/features=PackedStringArray("4.5", "GL Compatibility")
+boot_splash/image="uid://bbhh2rmc754kd"
+config/icon="res://assets/images/DjipiClubLogo.png"
+
+[autoload]
+
+NetworkManager="*res://scripts/autoload/network_manager.gd"
+DebugConsole="*res://scripts/autoload/debug_console.gd"
+PlayerSession="*res://scripts/autoload/player_session.gd"
+GameRegistry="*res://scripts/autoload/game_registry.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/resizable=false
+window/stretch/mode="canvas_items"
+window/handheld/orientation=1
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

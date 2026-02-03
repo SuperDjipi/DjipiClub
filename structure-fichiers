@@ -1,0 +1,29 @@
+src/
+├── index.ts                    # Entry point minimal
+├── server/
+│   ├── ExpressServer.ts        # Setup Express
+│   └── WebSocketServer.ts      # Setup WebSocket
+├── games/
+│   ├── GameFactory.ts          # Factory pattern pour créer jeux
+│   ├── scrabble/
+│   │   ├── ScrabbleGame.ts
+│   │   ├── ScrabbleLogic.ts
+│   │   └── ScrabbleValidator.ts
+│   ├── yam/
+│   │   ├── YamGame.ts
+│   │   └── YamLogic.ts
+│   └── boggle/
+│       └── ...
+├── chat/
+│   ├── ChatManager.ts          # Gestion messages
+│   └── ChatRoom.ts             # Salons de chat
+├── social/
+│   ├── FriendSystem.ts         # Système d'amis
+│   └── Notifications.ts        # Notifications
+├── models/
+│   ├── GameModels.ts           # Interface commune jeux
+│   ├── ChatModels.ts
+│   └── UserModels.ts
+└── services/
+    ├── GamePersistence.ts
+    └── UserService.ts

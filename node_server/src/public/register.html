@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S'inscrire - Le Bar CS</title>
+    <style>
+        body {font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,         sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 24px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Important */
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius:4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 16px;
+            font-weight: bold;
+        }
+        .message.success {
+            color: #28a745;
+        }
+        .message.error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Inscription au Bar CS</h1>
+        <form id="register-form">
+            <input type="text" id="name" placeholder="Choisissez votre pseudo" required>
+            <input type="password" id="password" placeholder="Choisissez un mot de passe" required>
+            <button type="submit">S'inscrire</button>
+        </form>
+        <div id="message-area" class="message"></div>
+    </div>
+<script>
+    // On récupère les éléments du DOM dont on a besoin
+        const form = document.getElementById('register-form');
+        const nameInput = document.getElementById('name');
+        const passwordInput = document.getElementById('password');
+        const messageArea = document.getElementById('message-area');
+
+        // On attache un "écouteur d'événements" au formulaire.
+        // Cette fonction sera exécutée quand l'utilisateur cliquera sur le bouton "S'inscrire".
+        form.addEventListener('submit', async function (event) {
+            // 1. Empêcher le comportement par défaut du formulaire (qui rafraîchirait la page)
+            event.preventDefault();
+
+            // On vide les messages précédents et on réinitialise les styles
+            messageArea.textContent = '';
+            messageArea.className = 'message';
+
+            // 2. On récupère les valeurs des champs de saisie
+            const name = nameInput.value;
+            const password = passwordInput.value;
+
+            try {
+                // 3. On envoie les données à notre API avec fetch()
+                const response = await fetch('/api/register', {
+                    method: 'POST', // On utilise la méthode POST
+                    headers: {
+                        'Content-Type': 'application/json' // On précise qu'on envoie du JSON 
+                        },
+                    body: JSON.stringify({ name, password }) // On convertit notre objet JS en une c        haîne JSON
+                });
+
+                // On récupère la réponse JSON du serveur
+                const data = await response.json();
+
+                // 4. On gère la réponse
+                if (response.ok) { // Les codes de statut 2xx (comme 201 Created) sont considérés co        mme "ok"
+                    messageArea.textContent = data.message;
+                    messageArea.classList.add('success');
+                    // On peut désactiver le formulaire ou rediriger l'utilisateur ici
+                    form.reset(); // On vide les champs
+                } else {
+                    // Si le serveur a renvoyé une erreur (4xx ou 5xx)
+                    messageArea.textContent = data.message || 'Une erreur est survenue.';
+                    messageArea.classList.add('error');
+                }
+
+            } catch (error) {
+                // Si une erreur réseau se produit (serveur inaccessible, etc.)
+                console.error('Erreur de communication avec le serveur:', error);
+                messageArea.textContent = 'Impossible de contacter le serveur. Veuillez réessayer pl        us tard.';
+                messageArea.classList.add('error');
+            }
+        });
+    </script>
+</body>
+</html>

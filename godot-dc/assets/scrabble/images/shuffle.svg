@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="outline">
+      <feMorphology in="SourceAlpha" result="expanded" operator="dilate" radius="2"/>
+      <feFlood flood-color="#F5EDE0" flood-opacity="0.9"/>
+      <feComposite in2="expanded" operator="in" result="outline"/>
+      <feComposite in="SourceGraphic" in2="outline" operator="over"/>
+    </filter>
+  </defs>
+  
+  <g transform="translate(50, 50)">
+    <!-- Flèche supérieure avec liseré -->
+    <path d="M -30 -20 L -5 -20 L -5 -28 L 12 -12 L -5 4 L -5 -4 L -30 -4"
+          fill="none" stroke="#F5EDE0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/>
+    <path d="M -30 -20 L -5 -20 L -5 -28 L 12 -12 L -5 4 L -5 -4 L -30 -4"
+          fill="none" stroke="#1A3A52" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" filter="url(#outline)"/>
+    
+    <!-- Flèche inférieure avec liseré -->
+    <path d="M 30 20 L 5 20 L 5 28 L -12 12 L 5 -4 L 5 4 L 30 4"
+          fill="none" stroke="#F5EDE0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/>
+    <path d="M 30 20 L 5 20 L 5 28 L -12 12 L 5 -4 L 5 4 L 30 4"
+          fill="none" stroke="#1A3A52" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" filter="url(#outline)"/>
+  </g>
+</svg>

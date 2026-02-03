@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SSL/WSS - DjipiClub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .test-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #ccc;
+            transition: all 0.3s;
+        }
+        
+        .test-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .test-item h3 {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-item h3::before {
+            content: "•";
+            font-size: 24px;
+        }
+        
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 8px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .log {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-weight: normal;
+        }
+        
+        .log div {
+            margin-bottom: 4px;
+            padding-left: 4px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .info {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #0d47a1;
+        }
+        
+        .info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .endpoint {
+            background: #e8f5e9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            margin-top: 5px;
+            color: #2e7d32;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .result-card {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .result-card strong {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 4px;
+            color: #495057;
+        }
+        
+        .result-card small {
+            color: #6c757d;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test SSL/WSS - DjipiClub</h1>
+        <p class="subtitle">Vérification de la connexion sécurisée au backend</p>
+        
+        <div class="info">
+            <strong>ℹ️ Configuration :</strong><br>
+            Backend: <code>https://djipi.club:8080</code><br>
+            WebSocket: <code>wss://djipi.club:8080</code>
+        </div>
+        
+        <button id="testBtn">▶️ Lancer tous les tests</button>
+        
+        <!-- Test HTTPS - Liste des joueurs -->
+        <div class="test-item">
+            <h3>👥 Liste des joueurs</h3>
+            <div class="endpoint">GET /api/players</div>
+            <div id="playersStatus" class="status pending">En attente...</div>
+            <div id="playersLog" class="log"></div>
+            <div id="playersResult" class="result-grid"></div>
+        </div>
+        
+        <!-- Test HTTPS - Joueurs en ligne -->
+        <div class="test-item">
+            <h3>🟢 Joueurs en ligne (Lobby)</h3>
+            <div class="endpoint">GET /api/lobby/players</div>
+            <div id="lobbyStatus" class="status pending">En attente...</div>
+            <div id="lobbyLog" class="log"></div>
+            <div id="lobbyResult" class="result-grid"></div>
+        </div>
+        
+        <!-- Test WebSocket - Lobby Chat -->
+        <div class="test-item">
+            <h3>💬 WebSocket Lobby</h3>
+            <div class="endpoint">wss://djipi.club:8080/lobby</div>
+            <div id="wssStatus" class="status pending">En attente...</div>
+            <div id="wssLog" class="log"></div>
+        </div>
+        
+        <!-- Test WebSocket - Game Connection -->
+        <div class="test-item">
+            <h3>🎮 WebSocket Jeu</h3>
+            <div class="endpoint">wss://djipi.club:8080/</div>
+            <div id="gameWssStatus" class="status pending">En attente...</div>
+            <div id="gameWssLog" class="log"></div>
+        </div>
+        
+        <!-- User Agent -->
+        <div class="test-item">
+            <h3>📱 Informations client</h3>
+            <div class="log" id="uaLog"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const BASE_URL = 'https://localhost:8080';
+        const WSS_LOBBY_URL = 'wss://localhost:8080/lobby';
+        const WSS_GAME_URL = 'wss://localhost:8080/';
+        
+        // Éléments DOM
+        const playersLog = document.getElementById('playersLog');
+        const lobbyLog = document.getElementById('lobbyLog');
+        const wssLog = document.getElementById('wssLog');
+        const gameWssLog = document.getElementById('gameWssLog');
+        
+        const playersStatus = document.getElementById('playersStatus');
+        const lobbyStatus = document.getElementById('lobbyStatus');
+        const wssStatus = document.getElementById('wssStatus');
+        const gameWssStatus = document.getElementById('gameWssStatus');
+        
+        const playersResult = document.getElementById('playersResult');
+        const lobbyResult = document.getElementById('lobbyResult');
+        
+        const testBtn = document.getElementById('testBtn');
+        const uaLog = document.getElementById('uaLog');
+        
+        // Afficher le User Agent
+        uaLog.textContent = navigator.userAgent;
+        
+        // Fonctions de logging
+        function log(element, message, type = 'info') {
+            const line = document.createElement('div');
+            const timestamp = new Date().toLocaleTimeString('fr-FR', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false
+            });
+            line.textContent = `[${timestamp}] ${message}`;
+            
+            // Couleurs
+            if (type === 'error') line.style.color = '#ff5555';
+            else if (type === 'success') line.style.color = '#50fa7b';
+            else if (type === 'warn') line.style.color = '#f1fa8c';
+            else line.style.color = '#bd93f9';
+            
+            element.appendChild(line);
+            element.scrollTop = element.scrollHeight;
+        }
+        
+        function logPlayers(message, type = 'info') {
+            log(playersLog, message, type);
+        }
+        
+        function logLobby(message, type = 'info') {
+            log(lobbyLog, message, type);
+        }
+        
+        function logWss(message, type = 'info') {
+            log(wssLog, message, type);
+        }
+        
+        function logGameWss(message, type = 'info') {
+            log(gameWssLog, message, type);
+        }
+        
+        // Test HTTPS - Liste des joueurs
+        async function testPlayersList() {
+            playersStatus.textContent = '🔄 Test en cours...';
+            playersStatus.className = 'status pending';
+            logPlayers('Début du test: GET /api/players');
+            
+            try {
+                const url = `${BASE_URL}/api/players`;
+                logPlayers(`Requête vers: ${url}`);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                logPlayers(`Status: ${response.status} ${response.statusText}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                logPlayers(`✅ Réponse reçue (${data.length} joueur(s))`, 'success');
+                logPlayers(JSON.stringify(data, null, 2), 'success');
+                
+                // Afficher les résultats
+                playersResult.innerHTML = '';
+                if (data.length > 0) {
+                    data.slice(0, 6).forEach(player => {
+                        const card = document.createElement('div');
+                        card.className = 'result-card';
+                        card.innerHTML = `
+                            <strong>${player.name || '???'}</strong>
+                            <small>${player.id?.substring(0, 8)}...</small>
+                        `;
+                        playersResult.appendChild(card);
+                    });
+                } else {
+                    playersResult.innerHTML = '<div class="result-card"><small>Aucun joueur</small></div>';
+                }
+                
+                playersStatus.textContent = `✅ ${data.length} joueur(s)`;
+                playersStatus.className = 'status success';
+                
+                return true;
+                
+            } catch (error) {
+                logPlayers(`❌ Erreur: ${error.message}`, 'error');
+                playersStatus.textContent = `❌ ${error.message}`;
+                playersStatus.className = 'status error';
+                return false;
+            }
+        }
+        
+        // Test HTTPS - Joueurs en ligne (Lobby)
+        async function testLobbyPlayers() {
+            lobbyStatus.textContent = '🔄 Test en cours...';
+            lobbyStatus.className = 'status pending';
+            logLobby('Début du test: GET /api/lobby/players');
+            
+            try {
+                const url = `${BASE_URL}/api/lobby/players`;
+                logLobby(`Requête vers: ${url}`);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                logLobby(`Status: ${response.status} ${response.statusText}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                logLobby(`✅ Réponse reçue (${data.length} joueur(s) en ligne)`, 'success');
+                logLobby(JSON.stringify(data, null, 2), 'success');
+                
+                // Afficher les résultats
+                lobbyResult.innerHTML = '';
+                if (data.length > 0) {
+                    data.slice(0, 6).forEach(player => {
+                        const card = document.createElement('div');
+                        card.className = 'result-card';
+                        card.innerHTML = `
+                            <strong>${player.name || '???'}</strong>
+                            <small>🟢 En ligne</small>
+                        `;
+                        lobbyResult.appendChild(card);
+                    });
+                } else {
+                    lobbyResult.innerHTML = '<div class="result-card"><small>Aucun en ligne</small></div>';
+                }
+                
+                lobbyStatus.textContent = `✅ ${data.length} en ligne`;
+                lobbyStatus.className = 'status success';
+                
+                return true;
+                
+            } catch (error) {
+                logLobby(`❌ Erreur: ${error.message}`, 'error');
+                lobbyStatus.textContent = `❌ ${error.message}`;
+                lobbyStatus.className = 'status error';
+                return false;
+            }
+        }
+        
+        // Test WebSocket - Lobby
+        function testWssLobby() {
+            return new Promise((resolve) => {
+                wssStatus.textContent = '🔄 Connexion...';
+                wssStatus.className = 'status pending';
+                logWss('Début du test WebSocket Lobby');
+                logWss(`Connexion à: ${WSS_LOBBY_URL}`);
+                
+                let ws;
+                const timeout = setTimeout(() => {
+                    if (ws && ws.readyState === WebSocket.CONNECTING) {
+                        logWss('⚠️ Timeout après 3s', 'warn');
+                        ws.close();
+                        wssStatus.textContent = '⚠️ Timeout';
+                        wssStatus.className = 'status error';
+                        resolve(false);
+                    }
+                }, 3000);
+                
+                try {
+                    ws = new WebSocket(WSS_LOBBY_URL);
+                    
+                    ws.onopen = () => {
+                        clearTimeout(timeout);
+                        logWss('✅ Connexion établie au lobby', 'success');
+                        logWss(`ReadyState: ${ws.readyState} (OPEN)`);
+                        
+                        // Envoyer un message de test
+                        const testMessage = {
+                            type: 'lobby_chat_message',
+                            payload: {
+                                message: 'Test SSL/WSS',
+                                playerId: 'test-' + Date.now(),
+                                playerName: 'TestBot'
+                            }
+                        };
+                        logWss(`📤 Envoi: ${JSON.stringify(testMessage)}`);
+                        ws.send(JSON.stringify(testMessage));
+                        
+                        // Fermer après un court délai
+                        setTimeout(() => {
+                            ws.close();
+                        }, 500);
+                    };
+                    
+                    ws.onmessage = (event) => {
+                        logWss(`📥 Reçu: ${event.data.substring(0, 80)}...`);
+                    };
+                    
+                    ws.onerror = (error) => {
+                        clearTimeout(timeout);
+                        logWss(`❌ Erreur: ${error.message}`, 'error');
+                        wssStatus.textContent = '❌ Erreur WebSocket';
+                        wssStatus.className = 'status error';
+                        if (ws) ws.close();
+                        resolve(false);
+                    };
+                    
+                    ws.onclose = (event) => {
+                        clearTimeout(timeout);
+                        const reason = event.code === 1000 ? 'Fermé normalement' : `Code ${event.code}`;
+                        logWss(`🔌 Déconnecté: ${reason}`);
+                        
+                        wssStatus.textContent = '✅ WSS Lobby OK';
+                        wssStatus.className = 'status success';
+                        resolve(true);
+                    };
+                    
+                } catch (error) {
+                    clearTimeout(timeout);
+                    logWss(`❌ Exception: ${error.message}`, 'error');
+                    wssStatus.textContent = `❌ ${error.message}`;
+                    wssStatus.className = 'status error';
+                    resolve(false);
+                }
+            });
+        }
+        
+        // Test WebSocket - Game Connection
+        function testWssGame() {
+            return new Promise((resolve) => {
+                gameWssStatus.textContent = '🔄 Connexion...';
+                gameWssStatus.className = 'status pending';
+                logGameWss('Début du test WebSocket Jeu');
+                logGameWss(`Connexion à: ${WSS_GAME_URL}`);
+                
+                let ws;
+                const timeout = setTimeout(() => {
+                    if (ws && ws.readyState === WebSocket.CONNECTING) {
+                        logGameWss('⚠️ Timeout après 3s', 'warn');
+                        ws.close();
+                        gameWssStatus.textContent = '⚠️ Timeout';
+                        gameWssStatus.className = 'status error';
+                        resolve(false);
+                    }
+                }, 3000);
+                
+                try {
+                    ws = new WebSocket(WSS_GAME_URL);
+                    
+                    ws.onopen = () => {
+                        clearTimeout(timeout);
+                        logGameWss('✅ Connexion établie au jeu', 'success');
+                        logGameWss(`ReadyState: ${ws.readyState} (OPEN)`);
+                        
+                        // Envoyer un message de test basique
+                        const testMessage = {
+                            type: 'ping',
+                            timestamp: Date.now()
+                        };
+                        logGameWss(`📤 Envoi: ${JSON.stringify(testMessage)}`);
+                        ws.send(JSON.stringify(testMessage));
+                        
+                        // Fermer après un court délai
+                        setTimeout(() => {
+                            ws.close();
+                        }, 500);
+                    };
+                    
+                    ws.onmessage = (event) => {
+                        logGameWss(`📥 Reçu: ${event.data.substring(0, 80)}...`);
+                    };
+                    
+                    ws.onerror = (error) => {
+                        clearTimeout(timeout);
+                        logGameWss(`❌ Erreur: ${error.message}`, 'error');
+                        gameWssStatus.textContent = '❌ Erreur WebSocket';
+                        gameWssStatus.className = 'status error';
+                        if (ws) ws.close();
+                        resolve(false);
+                    };
+                    
+                    ws.onclose = (event) => {
+                        clearTimeout(timeout);
+                        const reason = event.code === 1000 ? 'Fermé normalement' : `Code ${event.code}`;
+                        logGameWss(`🔌 Déconnecté: ${reason}`);
+                        
+                        gameWssStatus.textContent = '✅ WSS Jeu OK';
+                        gameWssStatus.className = 'status success';
+                        resolve(true);
+                    };
+                    
+                } catch (error) {
+                    clearTimeout(timeout);
+                    logGameWss(`❌ Exception: ${error.message}`, 'error');
+                    gameWssStatus.textContent = `❌ ${error.message}`;
+                    gameWssStatus.className = 'status error';
+                    resolve(false);
+                }
+            });
+        }
+        
+        // Lancer tous les tests
+        async function runTests() {
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Tests en cours...';
+            
+            // Réinitialiser les logs
+            playersLog.innerHTML = '';
+            lobbyLog.innerHTML = '';
+            wssLog.innerHTML = '';
+            gameWssLog.innerHTML = '';
+            
+            playersResult.innerHTML = '';
+            lobbyResult.innerHTML = '';
+            
+            // Lancer les tests en séquence
+            const results = {
+                players: await testPlayersList(),
+                lobby: await testLobbyPlayers(),
+                wssLobby: await testWssLobby(),
+                wssGame: await testWssGame()
+            };
+            
+            // Résultat final
+            setTimeout(() => {
+                testBtn.disabled = false;
+                testBtn.textContent = '▶️ Relancer les tests';
+                
+                const allPassed = Object.values(results).every(r => r);
+                
+                if (allPassed) {
+                    alert('✅ Tous les tests sont OK !\n\nLe certificat SSL fonctionne correctement.\nLa connexion WebSocket est opérationnelle.');
+                } else {
+                    const failed = Object.entries(results)
+                        .filter(([_, passed]) => !passed)
+                        .map(([name, _]) => name)
+                        .join(', ');
+                    
+                    alert(`⚠️ Tests échoués : ${failed}\n\nVérifiez la console pour plus de détails.`);
+                }
+            }, 1000);
+        }
+        
+        testBtn.addEventListener('click', runTests);
+        
+        // Lancer automatiquement au chargement (optionnel)
+        // window.addEventListener('load', () => {
+        //     setTimeout(runTests, 1000);
+        // });
+    </script>
+</body>
+</html>

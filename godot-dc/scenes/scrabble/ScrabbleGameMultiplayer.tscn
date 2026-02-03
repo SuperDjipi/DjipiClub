@@ -1,0 +1,168 @@
+[gd_scene load_steps=9 format=3 uid="uid://citeknyi2pqdp"]
+
+[ext_resource type="Script" uid="uid://k1ktnjip1y4c" path="res://scripts/games/scrabble/ScrabbleGameMultiplayer.gd" id="1_main_script"]
+[ext_resource type="Texture2D" uid="uid://cfcjqo4psnd3f" path="res://assets/scrabble/images/texture_bois_clair.jpg" id="2_uriv2"]
+[ext_resource type="Texture2D" uid="uid://r6apawmj6wv7" path="res://assets/scrabble/images/shuffle_bouton.png" id="3_cl3g2"]
+[ext_resource type="Texture2D" uid="uid://deyb6yyb3jloh" path="res://assets/scrabble/images/pass_bouton.png" id="4_uriv2"]
+[ext_resource type="Texture2D" uid="uid://c8y06hro1r3fg" path="res://assets/scrabble/images/play_bouton.png" id="5_p5sdc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bumx7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kk34j"]
+bg_color = Color(0.15537181, 0.4546799, 0.3250521, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kk34j"]
+load_path = "res://.godot/imported/undo_bouton.png-4cd0152a4c66a2f92b865c079e436890.ctex"
+
+[node name="ScrabbleGame" type="Node2D"]
+material = SubResource("ShaderMaterial_bumx7")
+script = ExtResource("1_main_script")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_top = -1.0
+offset_right = 40.0
+offset_bottom = 39.0
+scale = Vector2(0.3, 1)
+texture = ExtResource("2_uriv2")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MainContainer" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="TopContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Panel3" type="Panel" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kk34j")
+
+[node name="BackButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Back"
+
+[node name="Spacer2" type="Control" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScoreBoard" type="PanelContainer" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="Spacer3" type="Control" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton2" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Pref"
+
+[node name="ValidationPanel" type="PanelContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+
+[node name="Panel2" type="Panel" parent="CanvasLayer/MainContainer/VBoxContainer/ValidationPanel"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kk34j")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MainContainer/VBoxContainer/ValidationPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="ValidationLabel" type="RichTextLabel" parent="CanvasLayer/MainContainer/VBoxContainer/ValidationPanel/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+horizontal_alignment = 1
+
+[node name="BoardContainer" type="MarginContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RackContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MainContainer/VBoxContainer/RackContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 8
+
+[node name="ActionButtons" type="PanelContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kk34j")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="UndoButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+disabled = true
+icon = SubResource("CompressedTexture2D_kk34j")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ShuffleButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+icon = ExtResource("3_cl3g2")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Spacer" type="Control" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PassButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+disabled = true
+icon = ExtResource("4_uriv2")
+icon_alignment = 1
+expand_icon = true
+
+[node name="PlayButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+disabled = true
+icon = ExtResource("5_p5sdc")
+icon_alignment = 1
+expand_icon = true

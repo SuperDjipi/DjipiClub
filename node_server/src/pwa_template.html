@@ -1,0 +1,47 @@
+$GODOT_HEAD_INCLUDE
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>Djipi Club</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #1a1a1a;
+			overflow: hidden;
+		}
+		canvas {
+			display: block;
+		}
+		#loading {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: white;
+			font-family: Arial;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div id="loading">🎮 Chargement...</div>
+	<canvas id="canvas"></canvas>
+	<script>
+		var canvas = document.getElementById('canvas');
+		var statusElement = document.getElementById('loading');
+		
+		var engine = new Engine($GODOT_CONFIG);
+		
+		engine.init().then(function() {
+			statusElement.remove();
+			engine.startGame();
+		});
+	</script>
+$GODOT_BODY_INCLUDE
+</body>
+</html>

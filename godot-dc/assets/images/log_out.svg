@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="outline">
+      <feMorphology in="SourceAlpha" result="expanded" operator="dilate" radius="2"/>
+      <feFlood flood-color="#F5EDE0" flood-opacity="0.9"/>
+      <feComposite in2="expanded" operator="in" result="outline"/>
+      <feComposite in="SourceGraphic" in2="outline" operator="over"/>
+    </filter>
+  </defs>
+  
+  <g transform="translate(50, 50)">
+    <!-- Bord gauche avec liseré -->
+    <path d="M -28 -30 L -28 -12 L -23 -12 L -23 -25 L -12 -25 L -12 -30 Z"
+          fill="none" stroke="#F5EDE0" stroke-width="2" stroke-linejoin="round" opacity="0.4"/>
+    <path d="M -28 -30 L -28 -12 L -23 -12 L -23 -25 L -12 -25 L -12 -30 Z"
+          fill="none" stroke="#1A3A52" stroke-width="5" stroke-linejoin="round" filter="url(#outline)"/>
+    
+    <!-- Bord droit avec liseré -->
+    <path d="M 28 -30 L 28 -12 L 23 -12 L 23 -25 L 12 -25 L 12 -30 Z"
+          fill="none" stroke="#F5EDE0" stroke-width="2" stroke-linejoin="round" opacity="0.4"/>
+    <path d="M 28 -30 L 28 -12 L 23 -12 L 23 -25 L 12 -25 L 12 -30 Z"
+          fill="none" stroke="#1A3A52" stroke-width="5" stroke-linejoin="round" filter="url(#outline)"/>
+    
+    <!-- Flèche vers le bas avec liseré -->
+    <path d="M -18 0 L -18 18 L -25 18 L 0 32 L 25 18 L 18 18 L 18 0 Z"
+          fill="none" stroke="#F5EDE0" stroke-width="2" stroke-linejoin="round" opacity="0.4"/>
+    <path d="M -18 0 L -18 18 L -25 18 L 0 32 L 25 18 L 18 18 L 18 0 Z"
+          fill="none" stroke="#1A3A52" stroke-width="5" stroke-linejoin="round" filter="url(#outline)"/>
+  </g>
+</svg>

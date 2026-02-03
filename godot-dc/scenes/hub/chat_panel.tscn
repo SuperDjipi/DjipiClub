@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://du56jqkn7xw2k"]
+
+[ext_resource type="Script" uid="uid://bxbv3abnl2c87" path="res://scripts/hub/chat_panel.gd" id="1_chat"]
+
+[node name="ChatPanel" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_chat")
+
+[node name="MessagesPanel" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MessagesScroll" type="ScrollContainer" parent="MessagesPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MessagesContainer" type="VBoxContainer" parent="MessagesPanel/MessagesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="InputContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="MessageInput" type="LineEdit" parent="InputContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Votre message..."
+
+[node name="SendButton" type="Button" parent="InputContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Envoyer"

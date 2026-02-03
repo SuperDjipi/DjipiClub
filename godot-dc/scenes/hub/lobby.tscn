@@ -1,0 +1,141 @@
+[gd_scene load_steps=4 format=3 uid="uid://dn51xogm3qx5a"]
+
+[ext_resource type="Script" uid="uid://12iydldoaxnv" path="res://scripts/hub/lobby.gd" id="1_lobby"]
+[ext_resource type="Texture2D" uid="uid://bbhh2rmc754kd" path="res://assets/images/1768513572.png" id="2_4dg36"]
+[ext_resource type="PackedScene" path="res://scenes/hub/chat_panel.tscn" id="2_chat"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lobby")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_4dg36")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="RichTextLabel" parent="MainContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[font_size=32][color=#00aaaa]Djipi Club[/color][/font_size]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="WelcomeLabel" type="Label" parent="MainContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 2
+
+[node name="LogoutButton" type="Button" parent="MainContainer/Header"]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+text = "Déconnexion"
+
+[node name="HSeparator" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="ContentContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LeftPanel" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+theme_override_constants/separation = 10
+
+[node name="GamesSection" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="GamesSectionHeader" type="HBoxContainer" parent="MainContainer/ContentContainer/LeftPanel/GamesSection"]
+layout_mode = 2
+
+[node name="GamesTitle" type="RichTextLabel" parent="MainContainer/ContentContainer/LeftPanel/GamesSection/GamesSectionHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[font_size=18][color=#00aaaa]Vos parties en cours[/color][/font_size]"
+fit_content = true
+
+[node name="NewGameButton" type="Button" parent="MainContainer/ContentContainer/LeftPanel/GamesSection/GamesSectionHeader"]
+custom_minimum_size = Vector2(120, 35)
+layout_mode = 2
+text = "Nouvelle partie"
+
+[node name="GamesScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/LeftPanel/GamesSection"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GamesListContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftPanel/GamesSection/GamesScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="PlayersSection" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="PlayersTitle" type="RichTextLabel" parent="MainContainer/ContentContainer/LeftPanel/PlayersSection"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=18][color=#00aaaa]Joueurs inscrits[/color][/font_size]"
+fit_content = true
+
+[node name="PlayersScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/LeftPanel/PlayersSection"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlayersListContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftPanel/PlayersSection/PlayersScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="RightPanel" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/separation = 5
+
+[node name="ChatTitle" type="RichTextLabel" parent="MainContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=18][color=#00aaaa]Chat général[/color][/font_size]"
+fit_content = true
+
+[node name="ChatPanel" parent="MainContainer/ContentContainer/RightPanel" instance=ExtResource("2_chat")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StatusLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="RefreshTimer" type="Timer" parent="."]
+wait_time = 30.0

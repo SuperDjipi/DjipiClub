@@ -1,0 +1,115 @@
+[gd_scene load_steps=2 format=3 uid="uid://scrabble_game"]
+
+[ext_resource type="Script" path="res://scripts/games/scrabble/ScrabbleGameMultiplayer.gd" id="1_game"]
+
+[node name="ScrabbleGameMultiplayer" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MainContainer" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="CanvasLayer/MainContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.12, 0.1, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+
+[node name="TopContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+custom_minimum_size = Vector2(80, 50)
+layout_mode = 2
+text = "< Retour"
+
+[node name="ScoreBoard" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/TopContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ValidationPanel" type="PanelContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MainContainer/VBoxContainer/ValidationPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="ValidationLabel" type="RichTextLabel" parent="CanvasLayer/MainContainer/VBoxContainer/ValidationPanel/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = ""
+fit_content = true
+
+[node name="BoardContainer" type="MarginContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="RackContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="ActionButtons" type="PanelContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 15
+
+[node name="UndoButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(80, 50)
+layout_mode = 2
+text = "Rappel"
+
+[node name="ShuffleButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(80, 50)
+layout_mode = 2
+text = "Melanger"
+
+[node name="PassButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(80, 50)
+layout_mode = 2
+text = "Passer"
+
+[node name="PlayButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/ActionButtons/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+text = "Jouer"
