@@ -78,11 +78,20 @@ func _process_game_socket():
 		game_connection_status = state
 		match state:
 			WebSocketPeer.STATE_OPEN:
-				print("Connecte au serveur de jeu")
+				print("=== CONNECTE AU SERVEUR DE JEU ===")
 				connected_to_server.emit()
 			WebSocketPeer.STATE_CLOSED:
-				print("Deconnecte du serveur de jeu")
+				print("=== DECONNECTE DU SERVEUR DE JEU ===")
+				# Obtenir le code de fermeture pour plus d'informations
+				var close_code = game_socket.get_close_code()
+				var close_reason = game_socket.get_close_reason()
+				print("  Code de fermeture: ", close_code)
+				print("  Raison: ", close_reason)
 				disconnected_from_server.emit()
+			WebSocketPeer.STATE_CONNECTING:
+				print("  Etat: Connexion en cours...")
+			WebSocketPeer.STATE_CLOSING:
+				print("  Etat: Fermeture en cours...")
 
 	while game_socket.get_ready_state() == WebSocketPeer.STATE_OPEN and game_socket.get_available_packet_count():
 		var packet = game_socket.get_packet()
@@ -98,11 +107,19 @@ func _process_lobby_socket():
 		lobby_connection_status = state
 		match state:
 			WebSocketPeer.STATE_OPEN:
-				print("Connecte au lobby")
+				print("=== CONNECTE AU LOBBY ===")
 				lobby_connected.emit()
 			WebSocketPeer.STATE_CLOSED:
-				print("Deconnecte du lobby")
+				print("=== DECONNECTE DU LOBBY ===")
+				var close_code = lobby_socket.get_close_code()
+				var close_reason = lobby_socket.get_close_reason()
+				print("  Code de fermeture: ", close_code)
+				print("  Raison: ", close_reason)
 				lobby_disconnected.emit()
+			WebSocketPeer.STATE_CONNECTING:
+				print("  Lobby: Connexion en cours...")
+			WebSocketPeer.STATE_CLOSING:
+				print("  Lobby: Fermeture en cours...")
 
 	while lobby_socket.get_ready_state() == WebSocketPeer.STATE_OPEN and lobby_socket.get_available_packet_count():
 		var packet = lobby_socket.get_packet()
@@ -124,12 +141,21 @@ func connect_to_game(game_id_param: String, player_id_param: String, game_type: 
 		current_game_type = game_type
 
 	var full_url = SERVER_URL + "/" + game_id + "?playerId=" + player_id
-	print("Connexion au jeu: ", full_url)
+	print("=== CONNEXION AU JEU ===")
+	print("  URL complete: ", full_url)
+	print("  Game ID: ", game_id)
+	print("  Player ID: ", player_id)
+	print("  Game Type: ", game_type)
 
 	var error = game_socket.connect_to_url(full_url)
 	if error != OK:
-		print("Erreur de connexion au jeu: ", error)
-		connection_error.emit("Impossible de se connecter au serveur de jeu")
+		print("=== ERREUR DE CONNEXION (connect_to_url) ===")
+		print("  Code d'erreur Godot: ", error)
+		print("  Signification: ", _get_error_string(error))
+		print("  URL tente: ", full_url)
+		connection_error.emit("Impossible de se connecter au serveur de jeu (Erreur " + str(error) + ")")
+	else:
+		print("  Connexion initiee avec succes, en attente d'etablissement...")
 
 # Alias pour compatibilite avec l'ancien code
 func connect_to_server(game_id_param: String, player_id_param: String) -> void:
@@ -156,11 +182,18 @@ func connect_to_lobby(player_id_param: String) -> void:
 	URL : ws://djipi.club:8080/lobby?playerId={playerId}
 	"""
 	var full_url = SERVER_URL + "/lobby?playerId=" + player_id_param
-	print("Connexion au lobby: ", full_url)
+	print("=== CONNEXION AU LOBBY ===")
+	print("  URL complete: ", full_url)
+	print("  Player ID: ", player_id_param)
 
 	var error = lobby_socket.connect_to_url(full_url)
 	if error != OK:
-		print("Erreur de connexion au lobby: ", error)
+		print("=== ERREUR DE CONNEXION AU LOBBY ===")
+		print("  Code d'erreur Godot: ", error)
+		print("  Signification: ", _get_error_string(error))
+		print("  URL tente: ", full_url)
+	else:
+		print("  Connexion au lobby initiee avec succes")
 
 func disconnect_from_lobby() -> void:
 	"""Ferme la connexion WebSocket au lobby"""
@@ -174,19 +207,23 @@ func disconnect_from_lobby() -> void:
 
 func _handle_game_message(message: String) -> void:
 	"""Traite les messages JSON du serveur de jeu"""
+	print("=== MESSAGE RECU (JEU) ===")
+	print("  Brut: ", message.substr(0, min(message.length(), 200)))
+	
 	var json = JSON.new()
 	var parse_result = json.parse(message)
 
 	if parse_result != OK:
-		print("Erreur de parsing JSON (jeu)")
+		print("  ERREUR: Parsing JSON echoue avec code: ", parse_result)
 		return
 
 	var data = json.data
 	if not data is Dictionary:
-		print("Format de message invalide (jeu)")
+		print("  ERREUR: Format de message invalide (pas un Dictionary)")
 		return
 
 	var event_type = data.get("type", "")
+	print("  Type d'evenement: ", event_type)
 
 	match event_type:
 		"GAME_STATE_UPDATE":
@@ -194,7 +231,7 @@ func _handle_game_message(message: String) -> void:
 		"ERROR":
 			_handle_error(data)
 		_:
-			print("Type d'evenement jeu inconnu: ", event_type)
+			print("  ATTENTION: Type d'evenement jeu inconnu: ", event_type)
 
 func _handle_game_state_update(data: Dictionary) -> void:
 	"""Traite une mise a jour de l'etat du jeu"""
@@ -212,10 +249,11 @@ func _handle_game_state_update(data: Dictionary) -> void:
 
 func _handle_error(data: Dictionary) -> void:
 	"""Traite un message d'erreur du serveur"""
+	print("=== ERREUR DU SERVEUR (JEU) ===")
 	var payload = data.get("payload", {})
 	var error_message = payload.get("message", "Erreur inconnue")
-
-	print("Erreur du serveur: ", error_message)
+	print("  Message d'erreur: ", error_message)
+	print("  Payload complet: ", payload)
 	error_received.emit(error_message)
 
 # ============================================================================
@@ -384,3 +422,45 @@ func get_connection_status_string() -> String:
 			return "Deconnecte"
 		_:
 			return "Statut inconnu"
+
+func _get_error_string(error_code: int) -> String:
+	"""Retourne une description lisible des codes d'erreur Godot"""
+	match error_code:
+		OK:
+			return "Aucune erreur (OK)"
+		FAILED:
+			return "Echec general"
+		ERR_UNAVAILABLE:
+			return "Fonctionnalite non disponible"
+		ERR_UNCONFIGURED:
+			return "Non configure"
+		ERR_UNAUTHORIZED:
+			return "Non autorise"
+		ERR_PARAMETER_RANGE_ERROR:
+			return "Erreur de parametre"
+		ERR_OUT_OF_MEMORY:
+			return "Memoire epuisee"
+		ERR_FILE_NOT_FOUND:
+			return "Fichier non trouve"
+		ERR_FILE_BAD_DRIVE:
+			return "Unite invalide"
+		ERR_FILE_BAD_PATH:
+			return "Chemin invalide"
+		ERR_FILE_NO_PERMISSION:
+			return "Permission refusee"
+		ERR_ALREADY_IN_USE:
+			return "Deja utilise"
+		ERR_LOCKED:
+			return "Verrouille"
+		ERR_TIMEOUT:
+			return "Delai depasse"
+		ERR_CONNECTION_ERROR:
+			return "Erreur de connexion"
+		ERR_CANT_CONNECT:
+			return "Impossible de se connecter"
+		ERR_QUERY_FAILED:
+			return "Echec de la requete"
+		ERR_BUSY:
+			return "Occupe"
+		_:
+			return "Code d'erreur inconnu: " + str(error_code)

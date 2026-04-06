@@ -192,15 +192,14 @@ async function startServer() {
         key: fs.readFileSync(path.join(__dirname, '../key.pem')),
         cert: fs.readFileSync(path.join(__dirname, '../cert.pem'))
     };
-    //    const server = https.createServer(httpsOptions, app);
-    //    
-    //    server.listen(port, '0.0.0.0', () => {
-    //        console.log(`✅ Serveur DC HTTPS sur https://0.0.0.0:${port}`);
-    //        console.log(`📱 Local : https://${getLocalIP()}:${port}`);
-    //    });
-    const server = app.listen(port, () => {
-        console.log(`✅ Serveur démarré et à l'écoute sur http://localhost:${port}`);
+    const server = https.createServer(httpsOptions, app);
+    server.listen(port, '0.0.0.0', () => {
+        console.log(`✅ Serveur DC HTTPS sur https://0.0.0.0:${port}`);
+        console.log(`📱 Local : https://${getLocalIP()}:${port}`);
     });
+    //    const server = app.listen(port, () => {
+    //        console.log(`✅ Serveur démarré et à l'écoute sur http://localhost:${port}`);
+    //    });
     const wss = new WebSocketServer({ server });
     // --- DÉBUT DE L'API D'INSCRIPTION ---
     /**

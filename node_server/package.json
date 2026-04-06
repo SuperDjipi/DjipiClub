@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r src/games/dico dist/games/",
     "dev": "tsx watch --env-file=.env.development src/index.ts",
     "dev:prod": "tsx watch --env-file=.env.production src/index.ts",
     "start": "NODE_ENV=production node dist/index.js",
