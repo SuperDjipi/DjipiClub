@@ -45,6 +45,7 @@ func _ready():
 	# Connexion aux signaux du NetworkManager
 	NetworkManager.connected_to_server.connect(_on_connected_to_game)
 	NetworkManager.error_received.connect(_on_error_received)
+	NetworkManager.connection_error.connect(_on_connection_error)
 
 	# Charger les donnees
 	_refresh_all()
@@ -399,7 +400,10 @@ func _on_join_completed(result: int, code: int, headers: PackedStringArray, body
 
 func _start_websocket(game_id: String, game_type: String) -> void:
 	"""Lance la connexion WebSocket apres validation REST"""
-	print("Demarrage WebSocket...")
+	print("=== DEMARRAGE WEBSOCKET ===")
+	print("  Game ID: ", game_id)
+	print("  Game Type: ", game_type)
+	print("  Player ID: ", PlayerSession.player_id)
 	update_status("Connexion WebSocket...")
 
 	# Deconnexion du lobby avant de rejoindre une partie
@@ -414,8 +418,27 @@ func _start_websocket(game_id: String, game_type: String) -> void:
 	# Connexion WebSocket
 	NetworkManager.connect_to_game(game_id, PlayerSession.player_id, game_type)
 
-	# Attendre la connexion puis lancer le jeu
-	await NetworkManager.connected_to_server
+	# Attendre la connexion ou l'erreur avec timeout
+	var timeout = 10.0  # 10 secondes
+	var elapsed = 0.0
+	var connected = false
+	
+	while elapsed < timeout and not connected:
+		await get_tree().create_timer(0.5).timeout
+		elapsed += 0.5
+		
+		if NetworkManager.is_connected_to_game():
+			connected = true
+			print("  WebSocket connecte apres ", elapsed, "s")
+			break
+		else:
+			print("  En attente de connexion... (", elapsed, "/", timeout, "s)")
+	
+	if not connected:
+		print("  TIMEOUT: Echec de connexion apres ", timeout, "s")
+		update_status("Timeout de connexion - verifiez que le serveur est accessible")
+		return
+
 	await get_tree().create_timer(0.3).timeout
 
 	print("Lancement du jeu: ", game_type)
@@ -427,8 +450,17 @@ func _on_connected_to_game() -> void:
 
 func _on_error_received(error: String) -> void:
 	"""Appele quand le serveur envoie une erreur"""
-	print("Erreur WebSocket: ", error)
+	print("=== ERREUR RECUE DANS LE LOBBY ===")
+	print("  Message: ", error)
+	print("  Timestamp: ", Time.get_datetime_string_from_system())
 	update_status(error)
+
+func _on_connection_error(error_message: String) -> void:
+	"""Appele quand la connexion WebSocket echoue"""
+	print("=== ERREUR DE CONNEXION (callback lobby) ===")
+	print("  Message: ", error_message)
+	print("  Timestamp: ", Time.get_datetime_string_from_system())
+	update_status("Erreur de connexion: " + error_message)
 
 # ============================================================================
 # ACTIONS UI

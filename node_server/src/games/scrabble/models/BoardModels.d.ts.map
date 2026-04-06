@@ -1,0 +1,1 @@
+{"version":3,"file":"BoardModels.d.ts","sourceRoot":"","sources":["BoardModels.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,KAAK,EAAE,aAAa,EAAE,IAAI,EAAE,MAAM,iBAAiB,CAAC;AAkDlE,wBAAgB,gBAAgB,IAAI,KAAK,CAQxC;AACD,wBAAgB,cAAc,CAAC,aAAa,EAAE,KAAK,EAAE,WAAW,EAAE;IAAE,aAAa,EAAE,aAAa,CAAC;IAAC,IAAI,EAAE,IAAI,CAAC;CAAE,EAAE,GAAG,KAAK,CAOxH"}
