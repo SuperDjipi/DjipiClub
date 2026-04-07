@@ -1,13 +1,9 @@
 ```
-# Build artifacts
-dist/
-build/
-target/
-
-# Compiled files
+# Compiled and build artifacts
 *.js.map
 *.ts.map
-*.d.ts
+dist/
+node_modules/
 
 # Dependencies
 node_modules/
@@ -25,14 +21,12 @@ node_modules/
 .vscode/
 .idea/
 
-# OS specific
-.DS_Store
-Thumbs.db
+# Compressed files
+*.tar.gz
 
-# Database
+# Database files
 *.sqlite
 
 # Certificates
-cert.pem
-key.pem
+*.pem
 ```
